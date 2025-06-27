@@ -3,6 +3,9 @@ import './App.css'
 
 function App() {
   const [location, setLocation] = useState('')
+  const [pollenData, setPollenData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleInputChange = (e) => {
     setLocation(e.target.value)
@@ -10,8 +13,25 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('Brukerens lokasjon: ${location}')
-    //Her kan man senere hente pollendata basert på lokasjon 
+    setError(null)
+
+    if (!location.trim()) {
+      setError('Vennligst skriv inn en gyldig lokasjon')
+      return
+    }
+
+    setLoading(true)
+    setPollenData(null)
+
+    //Simulerer API-kall med 1 sekunds delay
+    setTimeout(() => {
+      setPollenData({
+        location: location.trim(),
+        level: Math.floor(Math.random() * 5) + 1, //nivå 1-5 
+        type: 'Bjørk'
+      })
+      setLoading(false)
+    }, 1000)
   }
 
   return (
@@ -28,6 +48,18 @@ function App() {
         />
         <button type="submit">Sjekk pollennivå</button>
       </form>
+
+      {error && <p style={{color: 'red' }}>{error}</p>}
+
+      {loading && <p>Laster pollendata...</p>}
+
+      {pollenData && (
+        <div style={{marginTop: '1rem'}}>
+          <h2>{pollenData.location}</h2>
+          <p>Type: {pollenData.type}</p>
+          <p>Nivå: {pollenData.level} / 5</p>
+          </div>
+      )}
     </div>
   )
 }
